@@ -1,0 +1,13 @@
+[package]
+name = "norg_to_html"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+build_html = "2.6.0"
+rust-norg = { git = "https://github.com/nvim-neorg/rust-norg", branch = "main" }
+yaml-rust2 = "0.9"
+async-walkdir = "2"
+tokio = {version = "1.43.0", features = ["rt", "rt-multi-thread", "macros", "fs"] }
+futures = "0.3.31"
+itertools = "0.14.0"
