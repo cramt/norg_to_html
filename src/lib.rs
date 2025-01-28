@@ -5,8 +5,8 @@ pub mod parse_paragraph;
 use build_html::Html;
 use itertools::Either;
 use itertools::Itertools;
+use serde_yaml2::wrapper::YamlNodeWrapper;
 use std::{collections::HashMap, ffi::OsStr, path::Path};
-use yaml_rust2::Yaml;
 
 use anchor_disovery::anchor_disovery;
 use async_walkdir::WalkDir;
@@ -16,6 +16,7 @@ use html_entry::HtmlEntryFlat;
 use parse_ast::parse_ast;
 use rust_norg::parse_tree;
 use tokio::fs::{create_dir_all, read_to_string};
+use serde::{Serialize, Deserialize};
 
 async fn read_norg_dir(dir: &str) -> HashMap<String, String> {
     WalkDir::new(dir)
@@ -40,9 +41,9 @@ async fn read_norg_dir(dir: &str) -> HashMap<String, String> {
         .collect()
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct HtmlOutput {
-    pub metadata: Option<Yaml>,
+    pub metadata: Option<YamlNodeWrapper>,
     pub html: String,
 }
 
@@ -63,7 +64,7 @@ pub fn build_html(norg: &str) -> HtmlOutput {
             HtmlEntryFlat::Main(html_element) => Either::Right(html_element),
         });
     HtmlOutput {
-        metadata: metadatas.into_iter().next(),
+        metadata: metadatas.into_iter().next().map(YamlNodeWrapper::new),
         html: html.into_iter().map(|x| x.to_html_string()).collect(),
     }
 }
